@@ -14,7 +14,7 @@ Regulation = ±5%<br>
 Open-Loop isolated flyback convertor with RCD clamp(left) and without RCD clamp(right).
 <p align="center">
   <img src="Screenshots/simulation/Schematics.png" width="48%">
-  <img src="Screenshots/simulation/WITHOUT CLAMO.png" width="48%">
+  <img src="Screenshots/simulation/WITHOUT_CLAMP.png" width="48%">
 </p>
 
 ## Design 
@@ -146,9 +146,43 @@ All values are measured over one steady-state switching period (5.01388 ms to 5.
 | D2 reverse voltage, peak | 491 V |
 
 ## STARTUP TRANSIENTS
-During the initial start of convertor the output capacitor is initially uncharged. When MOSFET switching operation begins initial surges are observed. This happens as we applied the complete duty-cycle altogether and due to this the output capacitor charges demanding high current that cause these surges.
+During the initial start of convertor the output capacitor is initially uncharged. When MOSFET switching operation begins initial surges are observed. This happens as we applied the complete duty-cycle altogether and due to this the output capacitor charges (act like short circuit) demanding high current.
 
-![Tuning ](Screenshots/Transient waveforms/without soft start/19.png)
-![Tuning ](Screenshots/Transient waveforms/without soft start/19.png)
-![Tuning ](Screenshots/Transient waveforms/without soft start/19.png)
+![Tuning ](Screenshots/Transient_waveforms/without_soft_start/19.png)
+![Tuning ](Screenshots/Transient_waveforms/without_soft_start/19.png)
+![Tuning ](Screenshots/Transient_waveforms/without_soft_start/19.png)
+
+| Quantity | Pulse start | Steady state | Ratio |
+| :--- | ---: | ---: | ---: |
+| Primary current I(L1), max | 3.64 A | 0.841 A | 4.3x |
+| Secondary current I(L2), max | 37.5 A | 9.19 A | 4.1x |
+| MOSFET Vds, max | 640 V | 499 V | +141 V |
+| Vsec, min | -350 V | -46.6 V | 7.5x |
+| Vout, max | 13.98 V | 11.94 V | 
+
+### SOFT START 
+Soft start is the most common technique applied to remove these surges. In this the duty cycle is gradually increased to the value over a time interval rather then applying complete. Two soft start with ramp times 1.5ms and 3ms are simulated as follow:
+
+### 3ms ramp
+
+
+The following table depicts the comparison over a safer period of 0-6ms.
+
+| Quantity | Pulse start | 1.5 ms ramp | 3 ms ramp | Steady state |
+| :--- | ---: | ---: | ---: | ---: |
+| I(L1) max | 3.643 A | 0.932 A | 0.831 A | 0.841 A |
+| I(L1) min | -1.143 A | -0.342 A | -0.340 A | - |
+| I(L2) max | 37.54 A | 9.48 A | 9.16 A | 9.19 A |
+| I(L2) min | -7.77 A | -2.11 A | -1.08 A | - |
+| Vds max | 640.1 V | 496.6 V | 495.6 V | 499 V |
+| Vout max | 13.977 V | 11.994 V | 11.892 V | 11.94 V (avg) |
+| Overshoot above 12 V | +16.48 % | -0.05 % | -0.90 % | - |
+| Vsec max | +15.16 V | +13.08 V | +12.97 V | +13.3 V |
+| Vsec min | -350.3 V | -200.1 V | -104.0 V | -46.6 V |
+| Output power peak | 32.56 W | 23.98 W | 23.57 W | 24.7 W |
+| Rise time (10 % to 90 %) | 0.120 ms | 2.05 ms | 3.05 ms | - |
+| Time to 95 % (11.4 V) | 0.157 ms | 3.17 ms | 4.46 ms | - |
+
+Both ramps remove the surges by keeping the currents IL1( under 0.93A), IL2 (under 9.3A) and voltage don't overshoot. The 1.5ms ramp reaches 95% of output voltage earlier but has more overshoots as compared to 3ms ramp. The design trade-off depend entirely on the situation demand.
+
 
