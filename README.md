@@ -1,14 +1,13 @@
 # Open-Loop-Flyback-Convertor
-Design and simulation of an isolated DC-DC Flyback convertor in open loop with and without RCD snubber circuit to understand all different aspects of design.
+Design and simulation of an isolated DC-DC Flyback converter in open loop with and without RCD clamp circuit to understand all different aspects of design. Implementation of soft-start to understand how transient surges are suppressed.
 
 ## Design Specifications
 Input = 325V (DC)<br>
 Output = 12V (DC)<br>
 Output power = 24W<br>
 Output current = 2A<br>
-Switching frequency = 65 KHz<br>
+Switching frequency = 65 kHz<br>
 Target efficiency = 85%<br>
-Regulation = ±5%<br>
 
 ## SCHEMATICS
 Open-Loop isolated flyback convertor with RCD clamp(left) and without RCD clamp(right).
@@ -53,8 +52,8 @@ The flyback convertor here is designed for operation in Discontinuous conduction
 ![clamp-2](Screenshots/Design/8.jpeg)
 
 
-## TUNNING
-After running simulation with design elements the output voltage is found somewhere between 10-11V which is lesser then the required target ( incurring all the losses). So a open loop convertor is unregulated and can give voltages that are off the target.
+## TUNING
+After running simulation with design elements the output voltage is found somewhere between 10-11V which is lesser then the required target ( incurring all the losses). So a open loop converter is unregulated and can give voltages that are off the target.
 
 ![Tuning ](Screenshots/Design/9.jpeg)
 
@@ -149,8 +148,8 @@ All values are measured over one steady-state switching period (5.01388 ms to 5.
 During the initial start of convertor the output capacitor is initially uncharged. When MOSFET switching operation begins initial surges are observed. This happens as we applied the complete duty-cycle altogether and due to this the output capacitor charges (act like short circuit) demanding high current.
 
 ![Tuning ](Screenshots/Transient_waveforms/without_soft_start/19.png)
-![Tuning ](Screenshots/Transient_waveforms/without_soft_start/19.png)
-![Tuning ](Screenshots/Transient_waveforms/without_soft_start/19.png)
+![Tuning ](Screenshots/Transient_waveforms/without_soft_start/20.png)
+![Tuning ](Screenshots/Transient_waveforms/without_soft_start/21.png)
 
 | Quantity | Pulse start | Steady state | Ratio |
 | :--- | ---: | ---: | ---: |
@@ -163,7 +162,19 @@ During the initial start of convertor the output capacitor is initially uncharge
 ### SOFT START 
 Soft start is the most common technique applied to remove these surges. In this the duty cycle is gradually increased to the value over a time interval rather then applying complete. Two soft start with ramp times 1.5ms and 3ms are simulated as follow:
 
-### 3ms ramp
+### 3ms RAMP
+
+<p align="center">
+  <img src="Screenshots/Transient_waveforms/with_soft_start/3ms_soft_start/16.png" width="48%">
+  <img src="Screenshots/Transient_waveforms/with_soft_start/3ms_soft_start/17.png" width="48%">
+</p>
+
+![Tuning ](Screenshots/Transient_waveforms/with_soft_start/3ms_soft_start/18.png)
+
+
+### 1.5ms RAMP
+
+![Tuning ](Screenshots/Transient_waveforms/with_soft_start/1.5ms_soft_start/15.png)
 
 
 The following table depicts the comparison over a safer period of 0-6ms.
@@ -183,6 +194,9 @@ The following table depicts the comparison over a safer period of 0-6ms.
 | Rise time (10 % to 90 %) | 0.120 ms | 2.05 ms | 3.05 ms | - |
 | Time to 95 % (11.4 V) | 0.157 ms | 3.17 ms | 4.46 ms | - |
 
-Both ramps remove the surges by keeping the currents IL1( under 0.93A), IL2 (under 9.3A) and voltage don't overshoot. The 1.5ms ramp reaches 95% of output voltage earlier but has more overshoots as compared to 3ms ramp. The design trade-off depend entirely on the situation demand.
+Both ramps remove the surges by keeping the currents IL1 and IL2 close to steady state values and voltage don't overshoot. The 1.5ms ramp reaches 95% of output voltage earlier but has more overshoots as compared to 3ms ramp. The design trade-off depend entirely on the situation demand.
 
+## NOTES
+K = 0.9978 contributes about 5 µH of leakage in addition to the explicit 5 µH leakage inductor, so the simulated effective leakage is about 10 µH. This is why the clamp voltage, Vds peak (499 V) are higher than the hand-calculated values.
 
+Pulse start gives Vsec = -350 V, and the RFUH20NS3S is rated 350 V for both repetitive peak and DC reverse voltage. So a suitable diode with higher rating can be used.
